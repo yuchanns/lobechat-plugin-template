@@ -48,7 +48,7 @@ Object.entries(providers).forEach(([_, provider]) => {
 app.onError((err, _) => {
   return createErrorResponse(
     PluginErrorType.InternalServerError,
-    err as object,
+    err.message,
   )
 })
 
