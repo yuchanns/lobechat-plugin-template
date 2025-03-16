@@ -6,6 +6,7 @@ import { providers } from "./apis"
 import { createErrorResponse, PluginErrorType } from "@lobehub/chat-plugin-sdk"
 import { buildManifest, DESCRIPTION, TITLE } from "./manifest"
 import { apiGateway } from "./gateway"
+import { loggingMiddleware } from "./middlewares"
 
 const app = new Hono<{ Bindings: Bindings }>().use(
   prettyJSON(),
@@ -42,6 +43,7 @@ app
 const api = app.basePath("/api")
   .route("/gateway", apiGateway)
 Object.entries(providers).forEach(([_, provider]) => {
+  provider.route.use(loggingMiddleware)
   api.route(provider.path, provider.route)
 })
 
