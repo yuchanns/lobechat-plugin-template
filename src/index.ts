@@ -2,6 +2,10 @@ import { cors } from "hono/cors"
 import { logger } from "hono/logger"
 import { prettyJSON } from "hono/pretty-json"
 import { Hono } from "hono/tiny"
+import { providers } from "./apis"
+import { createErrorResponse, PluginErrorType } from "@lobehub/chat-plugin-sdk"
+import { buildManifest, DESCRIPTION, TITLE } from "./manifest"
+import { apiGateway } from "./gateway"
 
 const app = new Hono<{ Bindings: Bindings }>().use(
   prettyJSON(),
@@ -27,5 +31,25 @@ const app = new Hono<{ Bindings: Bindings }>().use(
     maxAge: 86400,
   }),
 )
+
+app
+  .get("/", (c) => c.text(`Welcome to ${TITLE}! ${DESCRIPTION} All routes are under \`/api\``))
+  .get("/manifest.json", (c) => {
+    const url = new URL(c.req.url)
+    return c.json(buildManifest(url, providers))
+  })
+
+const api = app.basePath("/api")
+  .route("/gateway", apiGateway)
+Object.entries(providers).forEach(([_, provider]) => {
+  api.route(provider.path, provider.route)
+})
+
+app.onError((err, _) => {
+  return createErrorResponse(
+    PluginErrorType.InternalServerError,
+    err as object,
+  )
+})
 
 export default app
