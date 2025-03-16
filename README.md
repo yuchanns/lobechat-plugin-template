@@ -1,6 +1,8 @@
 # 🤯 lobechat-plugin-template
 A Lobe-chat plugin template for Cloudflare Workers.
 
+![An example to provide the weather query service](https://github.com/user-attachments/assets/5c3a6d02-1d43-4510-a955-38575431b07b)
+
 ## ⚙️  Development
 
 We use [pnpm](https://pnpm.io/) as package manager. Follow these simple steps to get started:
