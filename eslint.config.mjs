@@ -10,8 +10,21 @@ export default tseslint.config(
   {
     ignores: ['worker-configuration.d.ts', '.wrangler/**', 'node_modules/**', 'build/**'],
     rules: {
+      "indent": ["error", "tab"],
       "quotes": ["error", "double"],
       "semi": ["error", "never"],
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          "args": "all",
+          "argsIgnorePattern": "^_",
+          "caughtErrors": "all",
+          "caughtErrorsIgnorePattern": "^_",
+          "destructuredArrayIgnorePattern": "^_",
+          "varsIgnorePattern": "^_",
+          "ignoreRestSiblings": true
+        }
+      ],
     }
   },
 );
