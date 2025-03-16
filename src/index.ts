@@ -34,6 +34,7 @@ const app = new Hono<{ Bindings: Bindings }>().use(
 )
 
 app
+  .use(loggingMiddleware)
   .get("/", (c) => c.text(`Welcome to ${TITLE}! ${DESCRIPTION} All routes are under \`/api\``))
   .get("/manifest.json", (c) => {
     const url = new URL(c.req.url)
@@ -44,7 +45,6 @@ const api = app.basePath("/api")
   .route("/gateway", apiGateway)
 
 Object.entries(providers).forEach(([_, provider]) => {
-  provider.route.use(loggingMiddleware)
   api.route(provider.path, provider.route)
 })
 
