@@ -10,7 +10,7 @@ export default tseslint.config(
   {
     ignores: ['worker-configuration.d.ts', '.wrangler/**', 'node_modules/**', 'build/**'],
     rules: {
-      "indent": ["error", "tab"],
+      "indent": ["error", 2],
       "quotes": ["error", "double"],
       "semi": ["error", "never"],
       "@typescript-eslint/no-unused-vars": [

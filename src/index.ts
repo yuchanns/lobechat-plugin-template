@@ -9,50 +9,50 @@ import { apiGateway } from "./gateway"
 import { loggingMiddleware } from "./middlewares"
 
 const app = new Hono<{ Bindings: Bindings }>().use(
-	prettyJSON(),
-	logger(),
-	cors({
-		origin: "*",
-		credentials: true,
-		allowHeaders: [
-			"X-CSRF-Token",
-			"X-Requested-With",
-			"Accept",
-			"Accept-Version",
-			"Content-Length",
-			"Content-MD5",
-			"Content-Type",
-			"Date",
-			"X-Api-Version",
-			"x-lobe-trace",
-			"x-lobe-plugin-settings",
-			"x-lobe-chat-auth",
-		],
-		allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-		maxAge: 86400,
-	}),
+  prettyJSON(),
+  logger(),
+  cors({
+    origin: "*",
+    credentials: true,
+    allowHeaders: [
+      "X-CSRF-Token",
+      "X-Requested-With",
+      "Accept",
+      "Accept-Version",
+      "Content-Length",
+      "Content-MD5",
+      "Content-Type",
+      "Date",
+      "X-Api-Version",
+      "x-lobe-trace",
+      "x-lobe-plugin-settings",
+      "x-lobe-chat-auth",
+    ],
+    allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    maxAge: 86400,
+  }),
 )
 
 app
-	.get("/", (c) => c.text(`Welcome to ${TITLE}! ${DESCRIPTION} All routes are under \`/api\``))
-	.get("/manifest.json", (c) => {
-		const url = new URL(c.req.url)
-		return c.json(buildManifest(url, providers))
-	})
+  .get("/", (c) => c.text(`Welcome to ${TITLE}! ${DESCRIPTION} All routes are under \`/api\``))
+  .get("/manifest.json", (c) => {
+    const url = new URL(c.req.url)
+    return c.json(buildManifest(url, providers))
+  })
 
 const api = app.basePath("/api")
-	.route("/gateway", apiGateway)
+  .route("/gateway", apiGateway)
 
 Object.entries(providers).forEach(([_, provider]) => {
-	provider.route.use(loggingMiddleware)
-	api.route(provider.path, provider.route)
+  provider.route.use(loggingMiddleware)
+  api.route(provider.path, provider.route)
 })
 
 app.onError((err, _) => {
-	return createErrorResponse(
-		PluginErrorType.InternalServerError,
-		err.message,
-	)
+  return createErrorResponse(
+    PluginErrorType.InternalServerError,
+    err.message,
+  )
 })
 
 export default app
