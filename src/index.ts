@@ -6,7 +6,7 @@ import { providers } from "./apis"
 import { createErrorResponse, PluginErrorType } from "@lobehub/chat-plugin-sdk"
 import { buildManifest, DESCRIPTION, TITLE } from "./manifest"
 import { apiGateway } from "./gateway"
-import { loggingMiddleware } from "./middlewares"
+import { bufferMiddleware, loggingMiddleware } from "./middlewares"
 
 const app = new Hono<{ Bindings: Bindings }>().use(
   prettyJSON(),
@@ -34,7 +34,7 @@ const app = new Hono<{ Bindings: Bindings }>().use(
 )
 
 app
-  .use(loggingMiddleware)
+  .use(bufferMiddleware, loggingMiddleware)
   .get("/", (c) => c.text(`Welcome to ${TITLE}! ${DESCRIPTION} All routes are under \`/api\``))
   .get("/manifest.json", (c) => {
     const url = new URL(c.req.url)
