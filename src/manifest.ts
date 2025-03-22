@@ -1,4 +1,4 @@
-import { LobeChatPluginManifest, PluginSchema } from "@lobehub/chat-plugin-sdk"
+import type { LobeChatPluginManifest, PluginSchema } from "@lobehub/chat-plugin-sdk"
 
 // Replace the following with your plugin's information
 export const TITLE = "LobeChat Plugin Template"
@@ -14,28 +14,26 @@ const SETTINGS: PluginSchema = {
   properties: {},
 }
 
-export const buildManifest = (url: URL, providers: APIProvider[]): LobeChatPluginManifest => {
-  const { protocol, host } = url
-  return {
-    "$schema": "../node_modules/@lobehub/chat-plugin-sdk/schema.json",
-    "version": "1",
-    "identifier": IDENTIFIER,
-    "author": AUTHOR,
-    "homepage": HOMEPAGE,
-    "gateway": `${protocol}//${host}/api/gateway`,
-    "meta": {
-      "avatar": AVATAR,
-      "tags": TAGS,
-      "title": TITLE,
-      "description": DESCRIPTION
-    },
-    "systemRole": SYSTEM_ROLE,
-    "settings": SETTINGS,
-    "api": Object.entries(providers).map(([_, provider]) => ({
-      "name": provider.name,
-      "url": `${protocol}//${host}/api/${provider.path}`,
-      "description": provider.description,
-      "parameters": provider.parameters,
-    })),
-  }
-}
+export const buildManifest = ({ protocol, host }: URL, providers: APIProvider[]): LobeChatPluginManifest => ({
+  $schema: "../node_modules/@lobehub/chat-plugin-sdk/schema.json",
+  version: "1",
+  identifier: IDENTIFIER,
+  author: AUTHOR,
+  homepage: HOMEPAGE,
+  gateway: `${protocol}//${host}/api/gateway`,
+  meta: {
+    avatar: AVATAR,
+    tags: TAGS,
+    title: TITLE,
+    description: DESCRIPTION
+  },
+  systemRole: SYSTEM_ROLE,
+  settings: SETTINGS,
+  api: Object.entries(providers).map(([_, { name, path, description, parameters }]) => ({
+    name,
+    url: `${protocol}//${host}/api/${path}`,
+    description,
+    parameters,
+  })),
+})
+
